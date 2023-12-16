@@ -13,7 +13,6 @@ import torch.optim as optim
 from matplotlib import pyplot as plt
 from Evaluate import evaluate
 from Net.lenet import LeNet_bn
-from Net.resnet import ResNet, BasicBlock, Bottleneck, ResNet_Avg
 from Config.config import parser
 from Data import loader
 import sys
@@ -43,7 +42,7 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 TRAIN = True  # TODO Check
 EVAL = True  # TODO Check
-ANN_INFO = True  # TODO Check
+
 
 
 data_dir_dict = {
@@ -51,7 +50,7 @@ data_dir_dict = {
 }
 net_name = 'tutorial_epoch_{}_lr_{}_batch_{}_optim_{}_classes_{}_l_gamma_{}_step_{}'.format(
     MAX_EPOCH, LR, BATCH_SIZE, OPTIM, N_CLASSES, L_GAMMA, STEP_SIZE)
-# net_name='test'
+
 
 net_used = 'lenet'  # TODO check
 
@@ -68,24 +67,17 @@ net_para_dict = {
 }
 
 net_dict = {'lenet': LeNet_bn,
-            'resnet': ResNet,
-            'resnet_avg': ResNet_Avg,}
-# TODO -----------------------------------------------------------------------
+            }
 
+os.makedirs('./CheckPoint', exist_ok=True)
+ckp_dir = os.path.join('./CheckPoint', net_name) # TODO train.py's dir
 
-root_path = '/hpcfs/cepc/higgsgpu/siyuansong/PID/Model'  # train.py's dir
-ckp_dir = os.path.join('/hpcfs/cepc/higgsgpu/siyuansong/PID/CheckPoint', net_name)
 if not os.path.exists(ckp_dir):
     os.mkdir(ckp_dir)
 
 model_path = os.path.join(ckp_dir, 'net.pth')
 loss_path = ckp_dir + '/loss.png'
-par_path = ckp_dir + '/hyper_paras.txt'
-net_info_path = ckp_dir + '/{}.txt'.format(net_used)
 
-ann_threshold_lists = np.linspace(0, 0.99999, 10000)
-effi_points = [0.90, 0.93, 0.95, 0.97, 0.99][::-1]
-ann_signal_label_list = [0,1,2]
 
 if __name__ == '__main__':
 
