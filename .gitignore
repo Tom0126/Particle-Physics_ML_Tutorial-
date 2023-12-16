@@ -12,3 +12,6 @@ test.py
 *.csv*
 *.npy*
 *.root*
+*.out*
+*.err*
+*.log*
