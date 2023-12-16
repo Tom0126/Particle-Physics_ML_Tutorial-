@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt
-from Evaluate import evaluate, get_ann_info
+from Evaluate import evaluate
 from Net.lenet import LeNet_bn
 from Net.resnet import ResNet, BasicBlock, Bottleneck, ResNet_Avg
 from Config.config import parser

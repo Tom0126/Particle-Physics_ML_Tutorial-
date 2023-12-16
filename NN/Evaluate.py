@@ -5,25 +5,14 @@
 # @date       : 2023-01-20 12:49:00
 # @brief      : CEPC PID
 """
-import torch
-import numpy as np
 
-from Config.config import parser
-import matplotlib.pyplot as plt
+import numpy as np
 from Data import loader
 import os
 from torch.nn import Softmax
-# from Train import ckp_dir, MEAN, STD
-from ANA.acc import plotACC, plotACCbar, plot_purity_threshold, plot_purity_ep
-from ANA.acc_extra import plotACCExtra
-from ANA.distribution import plotDistribution
-from ANA.roc import plotROC, plot_s_b_threshold, plot_s_b_ep, plot_s_b_ratio_threshold
-from ANA.ann_ana import ANN_ANA
-from Config.config import parser
+from ANA.acc import plotACCbar, plot_purity_threshold
+from ANA.roc import plotROC, plot_s_b_threshold, plot_s_b_ratio_threshold
 from torchmetrics.classification import MulticlassROC, MulticlassAUROC, MulticlassAccuracy
-from Net.lenet import LeNet_bn
-from Net.resnet import ResNet, BasicBlock, Bottleneck, ResNet_Avg
-import copy
 import torch
 
 
