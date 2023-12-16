@@ -1,9 +1,9 @@
 Universe = vanilla
 Executable=./train.sh
 Arguments  = 1000
-Log    = ./log/log.log
-Output = ./log/log.out
-Error  = ./log/log.err
+Log    = ./log.log
+Output = ./log.out
+Error  = ./log.err
 request_CPUs = 1
 request_GPUs = 0
 
