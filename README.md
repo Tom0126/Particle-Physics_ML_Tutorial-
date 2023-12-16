@@ -17,7 +17,9 @@
   
     cd <Directory-You-Prefer>
     git clone https://github.com/Tom0126/ParticlePhysicsMLTutorial-.git
-    cd 
+    cd ParticlePhysicsMLTutorial
+
+  You are currently in the working directory
   
 
 
