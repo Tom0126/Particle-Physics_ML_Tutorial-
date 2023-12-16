@@ -1,8 +1,4 @@
-MakeTrainsets/scripts
-Evaluate/scripts
-Model/scripts
-MakeTrainsets/log
-Evaluate/log
+*log
 Model/log
 __MACOSX
 *__pycache__*
@@ -11,7 +7,6 @@ __MACOSX
 test.py
 *.png*
 *.jpg*
-*.sh*
 *.suib*
 *.pdf*
 *.csv*

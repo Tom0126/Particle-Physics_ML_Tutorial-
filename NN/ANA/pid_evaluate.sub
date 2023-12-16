@@ -1,0 +1,10 @@
+Universe = vanilla
+Executable=./pid_evaluate.sh
+Arguments  = 1000
+Log    = ./log/log.log
+Output = ./log/log.out
+Error  = ./log/log.err
+request_CPUs = 10
+
+should_transfer_files = NO
+Queue

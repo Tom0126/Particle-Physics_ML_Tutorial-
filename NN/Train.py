@@ -16,15 +16,9 @@ from Net.lenet import LeNet_bn
 from Net.resnet import ResNet, BasicBlock, Bottleneck, ResNet_Avg
 from Config.config import parser
 from Data import loader
-import SetSeed
 import sys
-from pid_batch import pid
-from npy_pid_batch import npy_pid
 import pandas as pd
 
-from ANA.e_sigma import read_tot_e, read_tb_data_tot_e, read_fd_e_hit, read_composition
-from ANA.e_sigma_reconstruct import plot_main, plot_tot_e_purifiled_compare, plot_fd_hit_e, plot_selection_efficiency, \
-    plot_composition, plot_merged_evaluation, plot_merged_ann_score, plot_mc_tot_e_purifiled_compare
 
 hello_pytorch_DIR = os.path.abspath(os.path.dirname(__file__) + os.path.sep + ".." + os.path.sep + "..")
 sys.path.append(hello_pytorch_DIR)
@@ -32,8 +26,6 @@ sys.path.append(hello_pytorch_DIR)
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 args = parser.parse_args()
-if args.set_seed:
-    SetSeed.setupSeed(args.seed)  # set random seed
 
 # set hyper-parameters
 MAX_EPOCH = args.n_epoch
@@ -42,101 +34,37 @@ LR = args.learning_rate
 log_interval = args.log_interval
 val_interval = args.val_interval
 NUM_WORKERS = args.num_workers
-MEAN = args.mean
-STD = args.std
 OPTIM = args.optim
 N_CLASSES = args.n_classes
 STD_STATIC = args.standardize_static
 L_GAMMA = args.l_gamma
 STEP_SIZE = args.step
-SHORT_CUT = bool(args.short_cut)
-F_K=args.f_k
-F_S=args.f_s
-F_P=args.f_p
-
-
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-# path
-# TODO: data for this model
-
-# TODO ---------------------check---------------------------------------------
 TRAIN = True  # TODO Check
 EVAL = True  # TODO Check
 ANN_INFO = True  # TODO Check
-PID_BEAM = False  # TODO Check
+
 
 data_dir_dict = {
-    2: '/hpcfs/cepc/higgsgpu/siyuansong/PID/data/ihep_mc/pi_pt_no_noise',
-    3: '/hpcfs/cepc/higgsgpu/siyuansong/PID/data/ihep_mc/0720_version_no_noise',
-    4: '/hpcfs/cepc/higgsgpu/siyuansong/PID/data/ihep_mc/0720_version_block_{}_{}'.format(args.b_xy, args.b_z),
+    2: '/lustre/collider/songsiyuan/CEPC/PID/Data/tutorial',
 }
-net_name = '0901_mc_res18_avg_epoch_{}_lr_{}_batch_{}_optim_{}_classes_{}_l_gamma_{}_step_{}_st_{}_b_{}_{}_f_k_{}_f_s_{}_f_p_{}_v1'.format(
-    MAX_EPOCH, LR, BATCH_SIZE, OPTIM, N_CLASSES, L_GAMMA, STEP_SIZE, SHORT_CUT, args.b_xy, args.b_z, F_K, F_S, F_P)
+net_name = 'tutorial_epoch_{}_lr_{}_batch_{}_optim_{}_classes_{}_l_gamma_{}_step_{}'.format(
+    MAX_EPOCH, LR, BATCH_SIZE, OPTIM, N_CLASSES, L_GAMMA, STEP_SIZE)
 # net_name='test'
 
-net_used = 'resnet_avg'  # TODO check
+net_used = 'lenet'  # TODO check
 
 net_info_dict = {
     'lenet': {
         'n_classes': N_CLASSES,
+        'path': './Net/lenet.py'
     },
-
-    'resnet': {
-        'block': 'Bottleneck',
-        'layers': 'Res18',  # TODO check
-        'num_classes': N_CLASSES,
-        'start_planes': 40 // args.b_z,
-        'short_cut': SHORT_CUT,
-    },
-
-    'resnet_avg': {
-        'block': 'Bottleneck',
-        'layers': 'Res18',  # TODO check
-        'num_classes': N_CLASSES,
-        'start_planes': 40 // args.b_z,
-        'short_cut': SHORT_CUT,
-    }
-
-
-
 }
 
-res_config_dict = {
-    'BasicBlock': BasicBlock,
-    'Bottleneck': Bottleneck,
-    'Res18': [2, 2, 2, 2],
-    'Res34': [3, 4, 6, 3],
-    'Res101': [3, 4, 23, 3]
-}
-
-net_path_dict = {
-    'lenet': '/hpcfs/cepc/higgsgpu/siyuansong/PID/Model/Net/lenet.py',
-    'resnet': '/hpcfs/cepc/higgsgpu/siyuansong/PID/Model/Net/resnet.py',
-    'resnet_avg': '/hpcfs/cepc/higgsgpu/siyuansong/PID/Model/Net/resnet.py',
-}
 net_para_dict = {
     'lenet': {'classes': N_CLASSES},
 
-    'resnet':
-        {'block': res_config_dict.get(net_info_dict['resnet'].get('block')),
-         'layers': res_config_dict.get(net_info_dict['resnet'].get('layers')),
-         'num_classes': net_info_dict['resnet'].get('num_classes'),
-         'start_planes': net_info_dict['resnet'].get('start_planes'),
-         'first_kernal': F_K,
-         'first_stride': F_S,
-         'first_padding': F_P,
-         },
-
-    'resnet_avg':
-        {'block': res_config_dict.get(net_info_dict['resnet_avg'].get('block')),
-         'layers': res_config_dict.get(net_info_dict['resnet_avg'].get('layers')),
-         'num_classes': net_info_dict['resnet_avg'].get('num_classes'),
-         'start_planes': net_info_dict['resnet_avg'].get('start_planes'),
-         'first_kernal': F_K,
-         'first_stride': F_S,
-         'first_padding': F_P,
-         }
 }
 
 net_dict = {'lenet': LeNet_bn,
@@ -160,41 +88,27 @@ effi_points = [0.90, 0.93, 0.95, 0.97, 0.99][::-1]
 ann_signal_label_list = [0,1,2]
 
 if __name__ == '__main__':
-    # save hyper-parameters
-    dict = {'MAX_EPOCH': MAX_EPOCH, 'BATCH_SIZE': BATCH_SIZE, 'LR': LR, 'MEAN': MEAN, 'STD': STD, 'OPTIM': OPTIM
-        , 'N_CLASSES': N_CLASSES, 'STD_STATIC': STD_STATIC, 'L_GAMMA': L_GAMMA, 'STEP': STEP_SIZE,
-            'SHORT_CUT': SHORT_CUT, 'F_K':F_K}
 
-    filename = open(par_path, 'w')  # dict to txt
-    for k, v in dict.items():
-        filename.write(k + ':' + str(v))
-        filename.write('\n')
-    filename.close()
 
-    filename = open(net_info_path, 'w')  # dict to txt
-    for k, v in (net_info_dict.get(net_used)).items():
-        filename.write(k + ':' + str(v))
-        filename.write('\n')
-    filename.close()
-
-    os.system('cp {} {}'.format(net_path_dict.get(net_used), os.path.join(ckp_dir, 'net.py')))
     # TODO ============================ step 1/5 data ============================
 
     # DataLoder
     img_train_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Train/imgs.npy')
     label_train_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Train/labels.npy')
 
-    img_valid_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Validation/imgs.npy')
-    label_valid_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Validation/labels.npy')
+    img_vali_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Validation/imgs.npy')
+    label_vali_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Validation/labels.npy')
 
-    img_test_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Test/imgs.npy')
-    label_test_path = os.path.join(data_dir_dict.get(N_CLASSES), 'Test/labels.npy')
 
-    loader_train = loader.data_loader(img_train_path, label_train_path, mean=MEAN, std=STD,
-                                      num_workers=NUM_WORKERS, batch_size=BATCH_SIZE, mean_std_static=STD_STATIC)
-    loader_valid = loader.data_loader(img_valid_path, label_valid_path, mean=MEAN, std=STD,
-                                      num_workers=NUM_WORKERS, batch_size=BATCH_SIZE, mean_std_static=STD_STATIC)
-    # loader_test = loader.data_loader(img_test_path, label_test_path, num_workers=NUM_WORKERS)
+    loader_train = loader.data_loader(img_train_path,
+                                      label_train_path,
+                                      num_workers=NUM_WORKERS,
+                                      batch_size=BATCH_SIZE)
+    loader_vali = loader.data_loader(img_vali_path,
+                                      label_vali_path,
+                                      num_workers=NUM_WORKERS,
+                                      batch_size=BATCH_SIZE)
+
     # TODO ============================ step 2/5 model ============================
 
     net = net_dict.get(net_used)
@@ -273,7 +187,7 @@ if __name__ == '__main__':
                 loss_val = 0.
                 net.eval()
                 with torch.no_grad():
-                    for j, (inputs, labels) in enumerate(loader_valid):
+                    for j, (inputs, labels) in enumerate(loader_vali):
                         # input configuration
                         inputs = inputs.to(DEVICE)
                         labels = labels.to(DEVICE)
@@ -287,17 +201,11 @@ if __name__ == '__main__':
 
                         loss_val += loss.item()
 
-                    loss_val_epoch = loss_val / len(loader_valid)
+                    loss_val_epoch = loss_val / len(loader_vali)
                     valid_curve.append(loss_val_epoch)
                     print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                        epoch, MAX_EPOCH, j + 1, len(loader_valid), loss_val_epoch, correct_val / total_val))
+                        epoch, MAX_EPOCH, j + 1, len(loader_vali), loss_val_epoch, correct_val / total_val))
 
-                # save CKP
-                # torch.save({
-                #     'epoch': epoch,
-                #     'model_state_dict': net.state_dict(),
-                #     'optimizer_state_dict': optimizer.state_dict(),
-                #     'loss': loss,}, ck_path)
 
         train_x = range(len(train_curve))
         train_y = train_curve
@@ -308,7 +216,7 @@ if __name__ == '__main__':
         valid_y = valid_curve
 
         plt.plot(train_x, train_y, label='Train')
-        plt.plot(valid_x, valid_y, label='Valid')
+        plt.plot(valid_x, valid_y, label='Validation')
 
         plt.legend(loc='upper right')
         plt.ylabel('loss value')
@@ -344,46 +252,19 @@ if __name__ == '__main__':
         sep_datasets_dir_dict = {4: 'None'}
 
         evaluate(root_path=ckp_dir,
-                 mean=MEAN,
-                 std=STD,
                  n_classes=N_CLASSES,
                  net_used=net_used,
                  net_dict=net_dict,
                  net_para_dict=net_para_dict,
-                 combin_datasets_dir_dict=combin_datasets_dir_dict, fig_dir_name='Fig', threshold=pid_threshold,
+                 combin_datasets_dir_dict=combin_datasets_dir_dict,
+                 fig_dir_name='Fig',
+                 threshold=pid_threshold,
                  threshold_num=101,
-                 sep_datasets_dir_dict=sep_datasets_dir_dict, data_type='mc')
+                 data_type='mc')
 
 
 
-    if ANN_INFO:
-        # TODO============================ ANN info ============================
 
-        dataset_type = 'TV'
-
-        ana_dir = os.path.join(ckp_dir, 'ANA')
-        os.makedirs(ana_dir, exist_ok=True)
-
-        pid_tag_dir = os.path.join(ana_dir, 'PIDTags')
-        os.makedirs(pid_tag_dir, exist_ok=True)
-
-        pid_tag_dir = os.path.join(pid_tag_dir, dataset_type)
-        os.makedirs(pid_tag_dir, exist_ok=True)
-
-        ana_scores_path = os.path.join(pid_tag_dir, 'imgs_ANN.root')
-
-        get_ann_info(dataset_dir=os.path.join(data_dir_dict.get(N_CLASSES), dataset_type),
-                     ana_scores_path=ana_scores_path,
-                     ann_info_save_dir=ana_dir,
-                     model_path=model_path,
-                     n_classes=N_CLASSES,
-                     net_used=net_used,
-                     net_dict=net_dict,
-                     net_para_dict=net_para_dict,
-                     ann_threshold_lists=ann_threshold_lists,
-                     ann_signal_label_list=ann_signal_label_list,
-                     effi_points=effi_points
-                     )
 
 
 pass
