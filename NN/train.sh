@@ -6,7 +6,7 @@ source /lustre/collider/songsiyuan/ParticlePhysicsMLTutorial/set_up.sh
 # change hyper-parameters
 
 n_epoch=2
-batch_size=64
+batch_size=512
 lr=0.0001
 optim='SGD'
 n_classes=2
