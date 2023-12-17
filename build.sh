@@ -3,7 +3,7 @@
 source /lustre/collider/songsiyuan/conda.env
 
 # Specify the name of the virtual environment
-environment_name="env_test"
+environment_name="env_tutorial"
 
 # Create a virtual environment
 conda create --name $environment_name python=3.8
