@@ -13,6 +13,8 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 import copy
 from scipy.special import expit
+import warnings
+warnings.filterwarnings(action='ignore')
 
 np.set_printoptions(threshold=np.inf)
 
