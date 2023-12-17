@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source /lustre/collider/songsiyuan/ParticlePhysicsMLTutorial/set_up.sh
+source ../set_up.sh
 
 
 # change hyper-parameters
