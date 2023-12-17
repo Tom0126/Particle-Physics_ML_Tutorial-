@@ -1,0 +1,11 @@
+Universe = vanilla
+Executable=./cal.sh
+Arguments  = 1000
+Log    = ./log.log
+Output = ./log.out
+Error  = ./log.err
+request_CPUs = 5
+request_GPUs = 0
+
+should_transfer_files = NO
+Queue
