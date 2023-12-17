@@ -201,7 +201,7 @@ def evaluate(root_path, n_classes,
     # TODO ---------------------------check-----------------------------------------------------------------------------
 
     signals_dict = {
-        2: ['electron', 'pion'],
+        2: ['e+', 'pi+'],
        }
     # combination
 
