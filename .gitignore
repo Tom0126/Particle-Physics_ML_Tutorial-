@@ -16,3 +16,4 @@ test.py
 *.err*
 *.log*
 *CheckPoint*
+*.json*
