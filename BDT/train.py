@@ -433,7 +433,7 @@ if __name__ == '__main__':
 
 
     bdt = XGBDT(
-        file_dir='/lustre/collider/songsiyuan/CEPC/PID/Data/tutorial',
+        file_dir='/lustre/collider/songsiyuan/CEPC/PID/Data/BDT_tutorial',
         features=['Shower_density', 'Shower_start', 'Shower_layer_ratio', 'Shower_length', 'Hits_no', 'Shower_radius'],
         label_column='Particle_label',
         signal_label=0,
