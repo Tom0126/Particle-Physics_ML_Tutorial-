@@ -72,7 +72,7 @@ def plotACCbar(acc,save_path, threshold):
 
 
 def plot_purity_threshold(purities,signal,save_path,data_type,threshold_num):
-    particle_dim={'mu+':0,'e+':1,'pi+':2,'noise':3}
+    particle_dim={'e+':0,'pi+':1}
     particle_name = {'mu+': r'$\mu^+$', 'e+': r'$e^+$', 'pi+': r'$\pi^+$', 'noise': 'Noise'}
 
     text_dict={

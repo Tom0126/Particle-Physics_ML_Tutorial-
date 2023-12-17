@@ -251,13 +251,6 @@ def evaluate(root_path, n_classes,
         save_acc_particle_path = os.path.join(fig_dir, 'acc_particle.png')
         plotACCbar(acc_particles, save_acc_particle_path, threshold)
 
-        purities = purity_at_thresholds(model=net, dataloader=loader_test, device=device, num_classes=n_classes,
-                                        thresholds_num=threshold_num)
-        np.save(save_combin_path.format('purities'), purities)
-        for signal in signals:
-            save_purities_path = os.path.join(fig_dir, 'purity_{}.png'.format(signal))
-            plot_purity_threshold(purities, signal, save_purities_path, threshold_num=threshold_num,
-                                  data_type=data_type)
 
         # plot roc
 
