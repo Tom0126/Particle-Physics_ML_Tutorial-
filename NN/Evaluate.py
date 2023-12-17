@@ -165,7 +165,8 @@ def get_file_name(path):  # get .pth file
     return None
 
 
-def evaluate(root_path, n_classes,
+def evaluate(root_path,
+             n_classes,
              net_used,
              net_dict,
              net_para_dict,
@@ -179,7 +180,7 @@ def evaluate(root_path, n_classes,
 
 
     # load model
-    root_path = root_path
+
     model_path = os.path.join(root_path, get_file_name(root_path))
 
     ana_dir = os.path.join(root_path, 'ANA')
