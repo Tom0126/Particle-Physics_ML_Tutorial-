@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 def plotROC(fpr_path,tpr_path,auroc_path,signal,save_path,data_type):
 
-    particle_dim={'mu+':0,'e+':1,'pi+':2,'noise':3}
+    particle_dim={'e+':0,'pi+':1}
     particle_name={'mu+':r'$\mu^+$','e+':r'$e^+$','pi+':r'$\pi^+$','noise':'Noise'}
 
     text_dict = {
@@ -47,7 +47,7 @@ def plotROC(fpr_path,tpr_path,auroc_path,signal,save_path,data_type):
     plt.close(fig)
     # plt.show()
 def plot_s_b_threshold(fpr_path,tpr_path,signal,save_path,threshold_num, data_type):
-    particle_dim={'mu+':0,'e+':1,'pi+':2,'noise':3}
+    particle_dim={'e+':0,'pi+':1}
     particle_name = {'mu+': r'Muon', 'e+': r'Electron', 'pi+': r'Pion', 'noise': 'Noise'}
 
     text_dict = {
@@ -118,7 +118,7 @@ def plot_s_b_threshold(fpr_path,tpr_path,signal,save_path,threshold_num, data_ty
 def plot_s_b_ratio_threshold(fpr_path,tpr_path,signal,save_path,threshold_num, data_type):
 
     label_size=18
-    particle_dim={'mu+':0,'e+':1,'pi+':2,'noise':3}
+    particle_dim={'e+':0,'pi+':1}
     particle_name = {'mu+': r'Muon', 'e+': r'Electron', 'pi+': r'Pion', 'noise': 'Noise'}
     y_lim = {'mu+': 4000, 'e+': 6000, 'pi+': 5000, 'noise': 3000}
     text_dict = {
@@ -187,7 +187,7 @@ def plot_s_b_ratio_threshold(fpr_path,tpr_path,signal,save_path,threshold_num, d
     plt.close(fig)
 
 def plot_s_b_ep(threshold, tpr_file_lists, fpr_file_lists,ep_lists,signal, save_path, threshold_num):
-    particle_dim = {'mu+': 0, 'e+': 1, 'pi+': 2, 'noise': 3}
+    particle_dim={'e+':0,'pi+':1}
     particle_name = {'mu+': r'$\mu^+$', 'e+': r'$e^+$', 'pi+': r'$\pi^+$', 'noise': 'Noise'}
 
     tpr=[]
